@@ -2,4 +2,115 @@
 title: "Crypto Markets"
 author: "Eliza"
 format: html
+execute:
+  echo: false
 ---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(arrow)
+```
+
+```{r}
+ParquetFileReader$create("data/daily_prices.parquet")$GetSchema()
+```
+
+```{r}
+open_dataset("data/daily_prices.parquet") |>
+  collect() |>
+  slice_sample(n = 10)
+```
+
+```{r}
+open_dataset("data/daily_prices.parquet") |>
+  filter(date_raw >= "2025-01-01") |>
+  group_by(coin_id) |>
+  summarise(average_market_cap_usd = mean(market_cap_usd, na.rm = TRUE)) |>
+  arrange(desc(average_market_cap_usd)) |>
+  collect()
+```
+
+```{r}
+#| cache: true
+prices <- read_parquet("data/daily_prices.parquet")
+metadata <- read_parquet("data/coin_metadata.parquet")
+categories <- read_parquet("data/categories.parquet")
+
+crypto <- prices |>
+  left_join(metadata, by = "coin_id") |>
+  left_join(
+    categories |> rename(category_description = description),
+    by = "category_id"
+  ) |>
+  mutate(date = ymd(date_raw))
+```
+
+```{r}
+metadata <- metadata |>
+  mutate(launch_date_parsed = coalesce(
+    ymd(launch_date, quiet = TRUE),
+    mdy(launch_date, quiet = TRUE)
+  ))
+
+metadata |>
+  arrange(launch_date_parsed) |>
+  select(coin = coin_id, name = coin_name, launch_date, launch_date_parsed)
+```
+
+```{r}
+crypto |>
+  filter(coin_id == "btc") |>
+  ggplot(aes(x = date, y = price_usd)) +
+  geom_line()
+```
+
+```{r}
+crypto |>
+  group_by(date, category_name) |>
+  summarise(category_market_cap_usd = sum(market_cap_usd, na.rm = TRUE)) |>
+  group_by(date) |>
+  mutate(category_share = category_market_cap_usd / sum(category_market_cap_usd)) |>
+  ungroup() |>
+  mutate(category_name = fct_reorder(
+    category_name, category_share, .fun = median, .desc = TRUE
+  )) |>
+  ggplot(aes(x = date, y = category_share, fill = category_name)) +
+  geom_area() +
+  geom_rect(
+    data = tibble(
+      start = ymd(c("2022-05-07", "2022-11-08")),
+      end = ymd(c("2022-05-13", "2022-11-12"))
+    ),
+    aes(xmin = start, xmax = end, ymin = 0, ymax = 1),
+    inherit.aes = FALSE,
+    fill = "white",
+    alpha = 0.35,
+    color = "grey30",
+    linewidth = 0.3
+  ) +
+  annotate(
+    "label",
+    x = ymd(c("2022-05-09", "2022-11-10")),
+    y = 0.97,
+    label = c("Luna/UST crash", "FTX collapse"),
+    size = 3,
+    label.size = 0.2
+  ) +
+  scale_fill_viridis_d(option = "C", end = 0.9) +
+  scale_y_continuous(
+    labels = scales::label_percent(),
+    breaks = seq(0, 1, by = 0.2),
+    expand = expansion(mult = c(0, 0))
+  ) +
+  labs(
+    title = "Crypto Market-Cap Share by Category",
+    subtitle = "Daily share of combined market cap across the 22 coins in this dataset; categories sum to 100%.",
+    x = NULL,
+    y = "Share of combined market cap",
+    fill = "Category",
+    caption = "Source: daily_prices.parquet; category labels from coin_metadata.parquet and categories.parquet."
+  ) +
+  theme_minimal() +
+  theme(legend.position = "right")
+```

@@ -76,7 +76,100 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Schema
+date_raw: string
+coin_id: string
+price_usd: double
+market_cap_usd: double
+market_cap_str: string
+volume_usd: double</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 6
+   date_raw   coin_id  price_usd market_cap_usd market_cap_str   volume_usd
+   &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;                 &lt;dbl&gt;
+ 1 2023-09-22 xrp         0.512         5.12e10 $51.23B          326952855.
+ 2 2023-01-07 comp       34.1           3.41e 8 $341.05M           5487509.
+ 3 2024-05-27 btc     69348.            1.37e12 $1.37T         10599944568.
+ 4 2025-05-29 cro         0.0945        9.45e 9 $9.45B             9086026.
+ 5 2021-01-24 bnb        41.8           6.18e 9 $6.18B           186800275.
+ 6 2021-10-17 link       26.5           2.65e10 $26.46B          455566686.
+ 7 2023-10-11 ada         0.248         8.54e 9 $8.54B            48309376.
+ 8 2021-07-17 btc     31548.            5.92e11 $591.81B        6348301570.
+ 9 2023-06-23 usdt        1.00          8.55e10 $85.54B        12476937437.
+10 2019-01-07 btc      4001.            6.99e10 $69.89B         1053956184.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 2
+   coin_id average_market_cap_usd
+   &lt;chr&gt;                    &lt;dbl&gt;
+ 1 btc                    1.88e12
+ 2 eth                    3.47e11
+ 3 xrp                    2.22e11
+ 4 usdt                   1.71e11
+ 5 bnb                    1.05e11
+ 6 usdc                   6.60e10
+ 7 doge                   2.72e10
+ 8 ada                    2.12e10
+ 9 link                   1.51e10
+10 cro                    1.12e10
+# ℹ 12 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 4
+   coin  name         launch_date        launch_date_parsed
+   &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt;              &lt;date&gt;            
+ 1 btc   Bitcoin      January 3, 2009    2009-01-03        
+ 2 ltc   Litecoin     October 7, 2011    2011-10-07        
+ 3 xrp   XRP          2013-02-02         2013-02-02        
+ 4 doge  Dogecoin     December 8, 2013   2013-12-08        
+ 5 usdt  Tether       2014-10-06         2014-10-06        
+ 6 eth   Ethereum     2015-07-30         2015-07-30        
+ 7 bnb   BNB          July 25, 2017      2017-07-25        
+ 8 bch   Bitcoin Cash August 1, 2017     2017-08-01        
+ 9 link  Chainlink    September 19, 2017 2017-09-19        
+10 ada   Cardano      2017-09-29         2017-09-29        
+# ℹ 12 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by date and category_name.
+ℹ Output is grouped by date.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(date, category_name))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in annotate("label", x = ymd(c("2022-05-09", "2022-11-10")), y = 0.97,
+: Ignoring unknown parameters: `label.size`</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 </main>
 <!-- /main column -->
